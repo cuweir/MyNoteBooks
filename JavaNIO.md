@@ -1,3 +1,5 @@
+# Java NIO
+
 ## Buffer
 
 本质上是内存中的一块
@@ -42,4 +44,69 @@ compact()：和 clear() 一样的是，它们都是在准备往 Buffer 填充新
 compact() 方法有点不一样，调用这个方法以后，会先处理还没有读取的数据，也就是 position 到 limit 之间的数据（还没有读过的数据），先将这些数据移到左边，然后在这个基础上再开始写入。很明显，此时 limit 还是等于 capacity，position 指向原来数据的右边
 
 ## Channel
+
+通道，数据来源或写入的目的地
+
+读操作：channel to buffer，channel.read(buffer)
+
+写操作：buffer to channel，channel.write(buffer)
+
+### FileChannel
+
+### SocketChannel
+
+不仅仅是 TCP 客户端，它代表的是一个网络通道，可读可写
+
+### ServerSocketChannel
+
+对应服务端，用于监听机器端口
+
+不和buffer打交道，因为不实际处理数据
+
+### DatagramChannel
+
+UDP链接，处理服务端和客户端
+
+## Selector
+
+非阻塞，多路复用，用于实现一个线程管理多个Channel
+
+```java
+// 将通道设置为非阻塞模式，因为默认都是阻塞模式的
+channel.configureBlocking(false);
+// 注册
+SelectionKey key = channel.register(selector, SelectionKey.OP_READ);
+```
+
+方法：
+
+select()：将上次select之后准备好的channel对应的SelectionKey复制到selected set，会阻塞
+
+selectNow()：和select()一样，通道没有准备好会立即返回0
+
+select(long timeout)：
+
+wakeup()：唤醒等待的select()上的线程
+
+
+
+# Java非阻塞IO和异步IO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
