@@ -93,10 +93,87 @@ wakeup()：唤醒等待的select()上的线程
 
 # Java非阻塞IO和异步IO
 
+即NIO和AIO
 
+## 阻塞模式IO
 
+来一个新的连接，就新开一个线程来处理这个连接，之后的操作全部由那个线程来完成。
 
+性能瓶颈：
 
+- 每次来一个连接都开一个新的线程这肯定是不合适的，活跃连接数高时，内存占用高，线程切换开销大
+- accept() 是一个阻塞操作，当 accept() 返回的时候，代表有一个连接可以使用
+
+## 非阻塞IO
+
+核心在于使用一个Selector管理多个通道，各个通道注册到Selector，指定监听的事件，可以只用一个线程轮询Selector
+
+- select：上世纪 80 年代就实现了，它支持注册 FD_SETSIZE(1024) 个 socket
+- poll：不限制socket数量。select 和 poll 都有一个共同的问题，那就是**它们都只会告诉你有几个通道准备好了，但是不会告诉你具体是哪几个通道**
+- epoll：能直接返回具体的准备好的通道，时间复杂度 O(1)。
+
+## NIO.2 异步IO
+
+JDK 1.7发布，引入异步 IO 接口和 Paths 等文件访问接口
+
+由线程池负责执行任务，使用回调或自己去查询结果
+
+异步 IO 主要是为了控制线程数量，减少过多的线程带来的内存消耗和 CPU 在线程调度上的开销。
+
+Java异步IO提供了两种方式，分别是返回Future实例和使用回调函数：
+
+### 1. 返回 Future 实例
+
+- future.isDone();
+
+  判断操作是否已经完成，包括了**正常完成、异常抛出、取消**
+
+- future.cancel(true);
+
+  取消操作，方式是中断。参数 true 说的是，即使这个任务正在执行，也会进行中断。
+
+- future.isCancelled();
+
+  是否被取消，只有在任务正常结束之前被取消，这个方法才会返回 true
+
+- future.get(); 
+
+  这是我们的老朋友，获取执行结果，阻塞。
+
+- future.get(10, TimeUnit.SECONDS);
+
+  如果上面的 get() 方法的阻塞你不满意，那就设置个超时时间。
+
+### 2. 提供 CompletionHandler 回调函数
+
+java.nio.channels.CompletionHandler 接口定义：
+
+```java
+public interface CompletionHandler<V,A> {
+
+    void completed(V result, A attachment);
+
+    void failed(Throwable exc, A attachment);
+}
+```
+
+### AsynchronousFileChannel
+
+文件 IO 在所有的操作系统中都不支持非阻塞模式，但是我们可以对文件 IO 采用异步的方式来提高性能。
+
+### AsynchronousServerSocketChannel
+
+这个类对应的是非阻塞 IO 的 ServerSocketChannel，大家可以类比下使用方式。
+
+### AsynchronousSocketChannel
+
+### Asynchronous Channel Groups
+
+AsynchronousServerSocketChannels 和     AsynchronousSocketChannels 是属于 group 的，当我们调用 AsynchronousServerSocketChannel 或 AsynchronousSocketChannel 的 open() 方法的时候，相应的 channel 就属于默认的 group，这个 group 由 JVM 自动构造并管理
+
+**AsynchronousFileChannels 不属于 group**
+
+# Tomcat 中的 NIO 源码分析
 
 
 
