@@ -126,3 +126,8 @@ keepAliveTime单位
 
 
 
+# 多线程
+
+### 生命周期
+
+new,runnable,running,blocked,dead
