@@ -281,11 +281,52 @@ Redis 主要有以下几种数据类型：
 - Lists
   - 有序列表
 - Sets
+  - 无序集合，自动去重
 - Sorted Sets
+  - 排序的set，，去重但可以排序，写进去的时候给一个分数，自动根据分数排序
 
 > Redis 除了这 5 种数据类型之外，还有 Bitmaps、HyperLogLogs、Streams 等。
 
-### 
+### Redis 的过期策略、内存淘汰机制、手写一下 LRU 代码实现
+
+常见问题：
+
+1. 写入的数据怎么没了？写的多了，干掉不常用的数据。
+2. 数据过期了怎么还占内存？Redis过期策略决定的
+
+#### 过期策略
+
+#### 手写LRU算法
+
+```java
+public class LRUCache<K, V> extends LinkedHashMap<K, V> {
+    private int capacity;
+
+    /**
+     * 传递进来最多能缓存多少数据
+     *
+     * @param capacity 缓存大小
+     */
+    public LRUCache(int capacity) {
+        super(capacity, 0.75f, true);
+        this.capacity = capacity;
+    }
+
+    /**
+     * 如果map中的数据量大于设定的最大容量，返回true，再新加入对象时删除最老的数据
+     *
+     * @param eldest 最老的数据项
+     * @return true则移除最老的数据
+     */
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+        // 当 map中的数据量大于指定的缓存个数的时候，自动移除最老的数据
+        return size() > capacity;
+    }
+}
+```
+
+
 
 
 
