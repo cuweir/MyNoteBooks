@@ -124,5 +124,9 @@ keepAliveTime单位
 
 创建一个定长线程池，支持定时及周期性任务执行。
 
+# 并发
 
+### synchronized
+
+java6之前的synchronized属于重量锁,性能较差, 它是基于操作系统的Mutex Lock互斥量实现的
 
