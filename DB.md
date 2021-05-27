@@ -1,3 +1,7 @@
+---
+typora-root-url: ./
+---
+
 # MySQL
 
 ## MySQL（Innodb）索引的原理
@@ -23,7 +27,7 @@ index_col_name:
 
 由于主键使用了聚簇索引，如果主键是自增id，，那么对应的数据一定也是相邻地存放在磁盘上的，写入性能比较高。如果是uuid的形式，频繁的插入会使innodb频繁地移动磁盘块，写入性能就比较低了。
 
-![image](https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index04.png)
+![index](/index.png)
 
 非聚簇索引的叶子节点不是真实数据，它的叶子节点依然是索引节点，存放的是该索引字段的值以及对应的主键索引(聚簇索引)。
 
