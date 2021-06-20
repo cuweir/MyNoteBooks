@@ -56,49 +56,6 @@ AOP要我们实现一个代理，实际运行的实例其实是生成的代理�
 
 
 
-# AQS
-
-AbstractQueuedSynchronizer
-
-用来构建同步器和锁的框架
-
-## 数据结构
-
-内部采用了volatile变量state来作为资源的标识
-
-本身实现的是一些排队和阻塞机制，它内部是一个先进先出的双端队列，使用了两个指针：head、tail
-
-![img](http://concurrent.redspider.group/article/02/imgs/AQS%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.png)
-
-但他它本身不是直接存储线程，而是存储拥有线程的节点Node
-
-## 资源共享模式
-
-- 独占模式（exclusive）：一个线程一次只能获取一个资源，如ReentrantLock
-- 共享模式（share）：同时可以被多个线程获取，如：Semaphore、CountDownLatch
-
-## 主要方法
-
-AQS的设计是基于**模板方法模式**的，它有一些方法必须要子类去实现的，它们主要有：
-
-- isHeldExclusively()：该线程是否正在独占资源。只有用到condition才需要去实现它。
-- tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。
-- tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。
-- tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
-- tryReleaseShared(int)：共享方式。尝试释放资源，如果释放后允许唤醒后续等待结点返回true，否则返回false。
-
-### 获取资源
-
-tryAcquire(int arg)
-
-arg独占模式为1
-
-如果获取资源失败，则通过addWaiter(Node.EXCLUSIVE)方法把这个线程插入到等待队列中。其中传入的参数代表要插入的Node是独占式的
-
-流程图：
-
-![acquire流程](http://concurrent.redspider.group/article/02/imgs/acquire%E6%B5%81%E7%A8%8B.jpg)
-
 
 
 
